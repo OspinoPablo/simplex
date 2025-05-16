@@ -2,9 +2,19 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from typing import List, Dict, Literal
 from fractions import Fraction
+from fastapi.middleware.cors import CORSMiddleware
 import copy
 
 app = FastAPI(title="Simplex Solver API")
+
+# Añadir el middleware CORS a la aplicación FastAPI
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Los orígenes permitidos
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos (GET, POST, PUT, DELETE)
+    allow_headers=["*"],  # Permitir todos los encabezados
+)
 
 def parse_fraction_dict(d):
     return {k: Fraction(v) if k != "sign" else v for k, v in d.items()}
@@ -259,3 +269,7 @@ class SimplexInput(BaseModel):
 @app.post("/simplex")
 def solve_simplex(data: SimplexInput):
     return simplex_solver(data.optimization, data.objective, data.restrictions)
+
+@app.get("/")
+async def root():
+    return {"message": "CORS habilitado y funcionando"}
