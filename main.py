@@ -265,10 +265,11 @@ class SimplexInput(BaseModel):
         {"X1": "0/1", "X2": "2/1", "sign": "<=", "value": "12/1"},
         {"X1": "3/1", "X2": "2/1", "sign": "<=", "value": "18/1"}
     ])
+    M: int = Field(..., example=1000)
 
 @app.post("/simplex")
 def solve_simplex(data: SimplexInput):
-    return simplex_solver(data.optimization, data.objective, data.restrictions)
+    return simplex_solver(data.optimization, data.objective, data.restrictions, data.M)
 
 @app.get("/")
 async def root():
